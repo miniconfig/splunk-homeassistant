@@ -1,0 +1,36 @@
+<form>
+  <label>Logbook</label>
+  <fieldset submitButton="true">
+    <input type="time" token="timerange" searchWhenChanged="false">
+      <label></label>
+      <default>
+        <earliest>@d</earliest>
+        <latest>now</latest>
+      </default>
+    </input>
+    <input type="text" token="domain">
+      <label>Domain Filter</label>
+      <default>*</default>
+    </input>
+    <input type="text" token="entity_id">
+      <label>Entity ID Filter</label>
+      <default>*</default>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <table>
+        <search>
+          <query>index = homeassistant domain=$domain$ entity_id=$entity_id$ |eval entry=friendly_name. " changed to " .value | table _time, entry</query>
+          <earliest>$timerange.earliest$</earliest>
+          <latest>$timerange.latest$</latest>
+        </search>
+        <option name="wrap">true</option>
+        <option name="rowNumbers">false</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">cell</option>
+        <option name="count">40</option>
+      </table>
+    </panel>
+  </row>
+</form>

@@ -1,0 +1,56 @@
+<form>
+  <label>History</label>
+  <fieldset submitButton="false">
+    <input type="time" token="time" searchWhenChanged="true">
+      <label></label>
+      <default>
+        <earliest>-4h@m</earliest>
+        <latest>now</latest>
+      </default>
+    </input>
+  </fieldset>
+  <row>
+    <html>
+            <h2>History</h2>
+            <div id="history-search" class="splunk-manager" data-require="splunkjs/mvc/searchmanager" data-options="{                     &quot;search&quot;: { &quot;type&quot;: &quot;token_safe&quot;, &quot;value&quot;: &quot;index = homeassistant |where isint(value) OR NOT isnum(value) |sort -_time,entity_id| dedup entity_id,value consecutive=true|streamstats range(_time) by entity_id window=2 global=f| table _time, domain, entity_id, value, range(_time)|rename range(_time) as duration|search NOT (domain=device_tracker AND duration=0)|eval duration=if(duration==0,now()-_time,duration)&quot; },                     &quot;earliest_time&quot;: { &quot;type&quot;: &quot;token_safe&quot;, &quot;value&quot;: &quot;$$time.earliest$$&quot; },                     &quot;latest_time&quot;: { &quot;type&quot;: &quot;token_safe&quot;, &quot;value&quot;: &quot;$$time.latest$$&quot; },                     &quot;cancelOnUnload&quot;: true,                     &quot;preview&quot;: true                  }">
+            </div>
+
+            <div id="history-view" class="splunk-view" data-require="app/homeassistant/components/gantt/gantt" data-options="{                     &quot;managerid&quot;: &quot;history-search&quot;,                     &quot;startField&quot;: &quot;_time&quot;,                     &quot;durationField&quot;: &quot;duration&quot;,                     &quot;categoryLabel&quot;: &quot;Entity&quot;,                     &quot;categoryField&quot;: &quot;entity_id&quot;,                     &quot;seriesLabel&quot;: &quot;Value&quot;,                     &quot;seriesField&quot;: &quot;value&quot;,                     &quot;timeAxisMode&quot; : &quot;DATA_RANGE&quot;                  }">
+            </div>
+        </html>
+  </row>
+  <row>
+    <panel>
+      <chart>
+        <search>
+          <query>index = homeassistant |where isnum(value) AND NOT isint(value)|timechart avg(value) by entity_id</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
+        <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
+        <option name="charting.axisTitleX.visibility">visible</option>
+        <option name="charting.axisTitleY.visibility">visible</option>
+        <option name="charting.axisTitleY2.visibility">visible</option>
+        <option name="charting.axisX.scale">linear</option>
+        <option name="charting.axisY.scale">linear</option>
+        <option name="charting.axisY2.enabled">0</option>
+        <option name="charting.axisY2.scale">inherit</option>
+        <option name="charting.chart">line</option>
+        <option name="charting.chart.bubbleMaximumSize">50</option>
+        <option name="charting.chart.bubbleMinimumSize">10</option>
+        <option name="charting.chart.bubbleSizeBy">area</option>
+        <option name="charting.chart.nullValueMode">gaps</option>
+        <option name="charting.chart.showDataLabels">none</option>
+        <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
+        <option name="charting.chart.stackMode">default</option>
+        <option name="charting.chart.style">shiny</option>
+        <option name="charting.drilldown">all</option>
+        <option name="charting.layout.splitSeries">0</option>
+        <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
+        <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
+        <option name="charting.legend.placement">right</option>
+      </chart>
+    </panel>
+  </row>
+</form>
